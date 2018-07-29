@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using ApiDesktopClient.Models;
 using Newtonsoft.Json;
 
 namespace ApiDesktopClient.Services
@@ -17,24 +18,25 @@ namespace ApiDesktopClient.Services
             URL = url;
         }
 
-        public async Task<IEnumerable<T>> GetAll()
+        public async Task<List<T>> GetAll()
         {
+
             using (var client = new HttpClient())
             {
-                HttpResponseMessage response = await client.GetAsync(URL);
-                response.EnsureSuccessStatusCode();
+                HttpResponseMessage response = client.GetAsync(URL).Result;  //doesn`t work with await, and don`t ask me why
                 string responseBody = await response.Content.ReadAsStringAsync();
                 IEnumerable<T> items = JsonConvert.DeserializeObject<IEnumerable<T>>(responseBody);
-                return items;
+                return items.ToList();
             }
+
         }
 
         public async Task Add(T item)
         {
             using (var client = new HttpClient())
             {
-                var content = new StringContent(JsonConvert.SerializeObject(item));
-                await client.PostAsync(URL, content);
+                var content = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
+                var response = await client.PostAsync(URL, content);
             }
 
         }
@@ -43,8 +45,9 @@ namespace ApiDesktopClient.Services
         {
             using (var client = new HttpClient())
             {
-                var content = new StringContent(JsonConvert.SerializeObject(item));
-                await client.PutAsync(URL + id.ToString(), content);
+                var content = new StringContent(JsonConvert.SerializeObject(item), Encoding.UTF8, "application/json");
+                var response = await client.PutAsync(URL + id.ToString(), content);
+
             }
         }
 
@@ -52,7 +55,7 @@ namespace ApiDesktopClient.Services
         {
             using (var client = new HttpClient())
             {
-                await client.DeleteAsync(URL + id.ToString());
+                var response = await client.DeleteAsync(URL + id.ToString());
             }
         }
     }

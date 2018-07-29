@@ -8,7 +8,44 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
-        <TextBlock Text="Stewardess" FontSize="30" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="auto" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Button Content="Add" Grid.Row="0" Grid.Column="0" HorizontalAlignment="Stretch" Margin="5" Click="Add"/>
+        <ListView Name="itemsList" Grid.Column="0" Grid.Row="1" SelectionChanged="itemsList_SelectionChanged">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid ColumnSpacing="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="{Binding FirstName}" Grid.Column="0"  FontSize="30"/>
+                        <TextBlock Text="{Binding LastName}" Grid.Column="1"  FontSize="30"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <Grid DataContext="{Binding ElementName=itemsList, Path=SelectedItem, Mode=TwoWay}" Grid.RowSpan="2" Grid.Row="0" Grid.Column="1" ColumnSpacing="10" RowSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="110"/>
+                <ColumnDefinition Width="*" MinWidth="110"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <TextBox Text="{Binding Path=FirstName, Mode=TwoWay}" PlaceholderText="First Name" Grid.Column="0" Grid.Row="0"/>
+            <TextBox Text="{Binding Path=LastName, Mode=TwoWay}" PlaceholderText="Last Name" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2"/>
+            <CalendarDatePicker x:Name="calendar" Date="{Binding Path=Birthday, Mode=TwoWay}" PlaceholderText="Birthday" CalendarIdentifier="GregorianCalendar"  Grid.Column="1" Grid.Row="0"/>
+            <Button Grid.Column="0" Grid.Row="2" Content="Save" HorizontalAlignment="Stretch" Click="Save"/>
+            <Button Grid.Column="1" Grid.Row="2" Content="Delete" HorizontalAlignment="Stretch" Click="Delete"/>
+        </Grid>
     </Grid>
 </Page>
